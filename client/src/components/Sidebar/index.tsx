@@ -2,7 +2,8 @@
 
 import { useAppDispatch, useAppSelector } from "@/app/redux";
 import { setIsSidebarCollapsed } from "@/state";
-import { useGetProjectsQuery } from "@/state/api";
+import { useGetAuthUserQuery, useGetProjectsQuery } from "@/state/api";
+import { signOut } from "aws-amplify/auth";
 import {
   AlertCircle,
   AlertOctagon,
@@ -30,11 +31,23 @@ const Sidebar = () => {
   const [showPriority, setShowPriority] = useState(true);
 
   const { data: projects } = useGetProjectsQuery();
-  console.log(projects)
+  
   const dispatch = useAppDispatch();
   const isSidebarCollapsed = useAppSelector(
     (state) => state.global.isSidebarCollapsed,
   );
+  const { data: currentUser } = useGetAuthUserQuery({})
+
+  const handleSignOut = async () => {
+    try{
+      await signOut()
+    } catch(err){
+      console.error("Error signing out", err)
+    } 
+  }
+
+  if(!currentUser) return null
+  const currentUserDetails = currentUser?.userDetails
 
 
   const sidebarClassNames = `fixed flex flex-col h-[100%] justify-between shadow-xl
@@ -48,7 +61,7 @@ const Sidebar = () => {
         {/* TOP LOGO */}
         <div className="z-50 flex min-h-[56px] w-64 items-center justify-between bg-white px-6 pt-3 dark:bg-black">
           <div className="text-xl font-bold text-gray-800 dark:text-white">
-          UNICODE
+            UNICODE
           </div>
           {isSidebarCollapsed ? null : (
             <button
@@ -152,18 +165,18 @@ const Sidebar = () => {
         )}
       </div>
       <div className="z-10 mt-32 flex w-full flex-col items-center gap-4 bg-white px-8 py-4 dark:bg-black md:hidden">
-        <div className="flex w-full items-center">
-          <div className="align-center flex h-9 w-9 justify-center">
-            {/* handle user */}
+        <div className="flex w-full item-center">
+          <div className="align-center flex size-9 justify-center">
+            <div className="size-4 rounded-full bg-purple-500"></div>
           </div>
-          <span className="mx-3 text-gray-800 dark:text-white">
-            
+          <span className="mx-3 text-gray-600 dark:text-white">
+            {currentUserDetails?.username}
           </span>
           <button
-            className="self-start rounded bg-blue-400 px-4 py-2 text-xs font-bold text-white hover:bg-blue-500 md:block"
-            
+            className="se-lf-start rounded bg-purple-500 px-4 py-2 text-xs font-bold text-white hover:bg-purple-700 md:block"
+            onClick={handleSignOut}
           >
-            Sign out
+            Sign Out
           </button>
         </div>
       </div>

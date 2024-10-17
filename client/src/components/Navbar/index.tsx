@@ -3,6 +3,8 @@ import { Menu, Moon, Search, Settings, Sun } from 'lucide-react'
 import Link from 'next/link'
 import { useAppDispatch, useAppSelector } from '@/app/redux'
 import { setIsDarkMode, setIsSidebarCollapsed } from '@/state'
+import { useGetAuthUserQuery } from '@/state/api'
+import { signOut } from 'aws-amplify/auth'
 
 const Navbar = () => {
   const dispatch = useAppDispatch()
@@ -12,6 +14,20 @@ const Navbar = () => {
   const isDarkMode = useAppSelector(
     (state)=> state.global.isDarkMode,
   )
+
+  const { data: currentUser } = useGetAuthUserQuery({})
+
+  const handleSignOut = async () => {
+    try{
+      await signOut()
+    } catch(err){
+      console.error("Error signing out", err)
+    } 
+  }
+
+  if(!currentUser) return null
+  const currentUserDetails = currentUser?.userDetails
+
   return (
     <div className='flex items-center justify-between bg-white px-4 py-3 dark:bg-black'>
       {/* search bar */}
@@ -51,6 +67,18 @@ const Navbar = () => {
         </Link>
         <div className='ml-2 mr-5 hidden min-h-[2em] w-[0.1rem] bg-gray-200 md:inline-block'>
 
+        </div>
+        <div className='hidden items-center justify-between md:flex'>
+          <div className='align-center flex size-9 justify-center'>
+            <div className='size-4 rounded-full bg-purple-500'></div>
+          </div>
+          <span className='mx-3 text-gray-600 dark:text-white'>
+            {currentUserDetails?.username}
+          </span>
+          <button className='hidden rounded bg-purple-500 py-2 px-4 text-xs font-bold text-white hover:bg-purple-700 md:block'
+          onClick={handleSignOut}>
+            Sign Out
+          </button>
         </div>
       </div>
     </div>
