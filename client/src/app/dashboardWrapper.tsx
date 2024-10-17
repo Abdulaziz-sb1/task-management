@@ -6,9 +6,9 @@ import StoreProvider, { useAppSelector } from './redux'
 
 const DashboardLayout = ({ children }: {children: React.ReactNode}) => {
   // seperated file than layout.tsx to use 'use client'
-  const isSideBarCollapsed = useAppSelector(
-    (state)=> state.global.isSidebarCollapsed,
-  )
+  // const isSideBarCollapsed = useAppSelector(
+  //   (state)=> state.global.isSidebarCollapsed,
+  // )
   const isDarkMode = useAppSelector(
     (state)=> state.global.isDarkMode,
   )

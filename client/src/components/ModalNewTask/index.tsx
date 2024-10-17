@@ -63,7 +63,7 @@ const ModalNewTask = ({ isOpen, onClose, id = null }: Props) => {
     <Modal isOpen={isOpen} 
     onClose={onClose} 
     name="Create New Task"
-    id={id}
+    // id={id}
     >
       <form
         className="mt-4 space-y-6"
